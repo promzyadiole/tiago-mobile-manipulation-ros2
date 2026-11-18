@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Data figures for my_tiago_documentation.html (matplotlib).
+"""Data figures for the README and the report (matplotlib).
 
 Run:  python3 make_figures.py
 Inputs: ../../src/my_tiago_bringup/maps/my_tiago_room.{pgm,yaml}, images/test_map_smeared.pgm

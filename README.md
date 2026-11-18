@@ -24,7 +24,6 @@ localisation, the MoveIt configuration and all of the task code were set up or w
 - **Exercise 2:** TIAGo moves a bottle and a cup from the middle table to a table in the corner **autonomously**, finding each object's 6-DOF pose with its head RGB-D camera, and checking every grasp and placement with the camera.
 
 📄 **[Report](report.pdf)** (5 pages: decisions, results, sources) ·
-📘 **[Full documentation](docs/my_tiago_documentation.pdf)** (67 pages: every component, test and fix) ·
 🛠 **[Installation](INSTALL.md)** ·
 🎬 **[Demo video](video/demo.mp4)** (2 minutes)
 
@@ -54,7 +53,7 @@ localisation, the MoveIt configuration and all of the task code were set up or w
 - **Geometric 3D perception from one RGB-D snapshot.** RANSAC table-plane fit, PCA of the table outline, grid clustering of the points above it, and a least-squares circle fit per object give each object's 6-DOF pose: position error about **2 cm**, height and radius within **2 mm**.
 - **Closed-loop task execution.** The camera confirms every step: after lifting, the object must be gone from the table; after placing, it must be on the target table. A free place spot is chosen from the detected table outline and the objects already on it.
 - **A patched Gazebo plugin.** The link attacher that holds grasped objects in simulation could freeze or crash Gazebo when releasing an object. Two thread-safety and bookkeeping bugs were found and fixed (`patches/`).
-- **Measured, not assumed.** Every component was tested against Gazebo ground truth before the next one was built; the documentation lists over 30 problems with their cause and fix.
+- **Measured, not assumed.** Every component was tested against Gazebo ground truth before the next one was built; over 30 problems were traced to their cause and fixed along the way.
 
 ## System overview
 
@@ -134,7 +133,7 @@ result with the camera again.
 
 ## Lessons from building it
 
-A selection of the problems solved along the way (the full table is in the documentation):
+A selection of the problems solved along the way:
 
 | Symptom | Cause | Fix |
 |---|---|---|

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate the Graphviz diagrams (SVG) used in my_tiago_documentation.html.
+"""Generate the Graphviz diagrams (SVG) used in the README and the report.
 
 Run:  python3 make_diagrams.py      (needs the `dot` command, package graphviz)
 Output: diagrams/*.svg

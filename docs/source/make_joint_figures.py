@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Joint-motion figures for my_tiago_documentation.html (chapter "How each joint moves").
+"""Joint-motion figures of TIAGo (one figure per joint, plus an overview).
 
 For every movable joint of the robot it draws the real robot meshes in 3D:
   - the PARENT link in blue,

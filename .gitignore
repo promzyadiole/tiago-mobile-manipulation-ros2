@@ -12,3 +12,8 @@ __pycache__/
 
 # Personal study notes (kept locally, not published)
 docs/reference/
+
+# Personal full documentation (kept locally, not published)
+docs/my_tiago_documentation.pdf
+docs/source/my_tiago_documentation.html
+docs/source/build_pdf.sh
