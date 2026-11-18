@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>my_tiago_description</name>
+  <version>0.0.0</version>
+  <description>Tiago mobile manipulator description project</description>
+  <maintainer email="promzy007adiole@yahoo.com">promise</maintainer>
+  <license>Apache-2.0</license>
+
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+    <!-- Robot model parts (overlaid from PAL in src/pal_description_overlay) -->
+  <exec_depend>tiago_description</exec_depend>
+  <exec_depend>pmb2_description</exec_depend>
+  <exec_depend>pal_gripper_description</exec_depend>
+  <exec_depend>pal_urdf_utils</exec_depend>
+
+  <!-- Tools used by the display launch file -->
+  <exec_depend>xacro</exec_depend>
+  <exec_depend>robot_state_publisher</exec_depend>
+  <exec_depend>joint_state_publisher_gui</exec_depend>
+  <exec_depend>rviz2</exec_depend>
+
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

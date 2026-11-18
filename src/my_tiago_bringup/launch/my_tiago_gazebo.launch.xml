@@ -1,0 +1,92 @@
+<?xml version="1.0"?>
+<!--
+  my_tiago in Gazebo Classic: the room world, Tiago spawned in its corner,
+  and all controllers running (driven through ros2_control's Gazebo plugin).
+
+  Usage:
+    ros2 launch my_tiago_bringup my_tiago_gazebo.launch.xml
+    ros2 launch my_tiago_bringup my_tiago_gazebo.launch.xml gui:=false
+
+  Drive the base: run teleop_twist_keyboard in a second terminal, remapping its
+  cmd_vel topic to /key_vel (twist_mux forwards it to the base controller).
+  (XML comments may not contain two hyphens in a row, so the full command is
+  not written here.)
+-->
+<launch>
+
+  <!-- ===== Arguments ===== -->
+  <arg name="gui" default="true" description="Start the Gazebo window (gzclient)"/>
+  <arg name="world" default="$(find-pkg-share my_tiago_bringup)/worlds/my_tiago_room.world"/>
+
+  <!-- ===== Files ===== -->
+  <let name="model" value="$(find-pkg-share my_tiago_description)/urdf/my_tiago.urdf.xacro"/>
+  <let name="controllers_config" value="$(find-pkg-share my_tiago_bringup)/config/my_tiago_controllers.yaml"/>
+
+  <!-- Robot description for SIMULATION:
+       use_sim_time:=true selects the gazebo_ros2_control hardware plugin and adds
+       the Gazebo plugin that starts the controller manager inside Gazebo. -->
+  <let name="robot_description"
+       value="$(command 'xacro $(var model) use_sim_time:=true is_public_sim:=true')"/>
+
+  <!-- ===== Gazebo must find the meshes =====
+       The URDF refers to meshes as package://tiago_description/... ; Gazebo Classic
+       resolves that by looking for a folder "tiago_description" in GAZEBO_MODEL_PATH.
+       With an overlay workspace, each package has its own .../install/<pkg>/share. -->
+  <set_env name="GAZEBO_MODEL_PATH"
+           value="$(find-pkg-prefix tiago_description)/share:$(find-pkg-prefix pmb2_description)/share:$(find-pkg-prefix pal_gripper_description)/share:$(find-pkg-prefix pal_urdf_utils)/share:$(env GAZEBO_MODEL_PATH '')"/>
+
+  <!-- ===== Gazebo must find its own shaders/materials =====
+       Normally set by "source /usr/share/gazebo/setup.sh". Without it, the
+       renderer fails ("Failed to initialize scene") and Gazebo aborts, because
+       Tiago's camera and GPU laser need rendering. -->
+  <set_env name="GAZEBO_RESOURCE_PATH"
+           value="/usr/share/gazebo-11:$(env GAZEBO_RESOURCE_PATH '')"/>
+
+  <!-- ===== 1. Gazebo (server + optional GUI) with our world ===== -->
+  <include file="$(find-pkg-share gazebo_ros)/launch/gzserver.launch.py">
+    <arg name="world" value="$(var world)"/>
+  </include>
+  <include file="$(find-pkg-share gazebo_ros)/launch/gzclient.launch.py" if="$(var gui)"/>
+
+  <!-- ===== 2. robot_state_publisher (TF, in simulated time) ===== -->
+  <node pkg="robot_state_publisher" exec="robot_state_publisher" output="log">
+    <param name="robot_description" value="$(var robot_description)" type="str"/>
+    <param name="use_sim_time" value="true"/>
+  </node>
+
+  <!-- ===== 3. Put Tiago into Gazebo =====
+       Reads the URDF from /robot_description. No -x/-y: the robot appears at the
+       world origin, which is the corner of the room. -->
+  <node pkg="gazebo_ros" exec="spawn_entity.py" output="screen"
+        args="-topic robot_description -entity tiago"/>
+
+  <!-- ===== 4. Controllers =====
+       The controller manager is started by the gazebo_ros2_control plugin once the
+       robot is spawned; the spawner waits for it (up to 120 s), then loads,
+       configures and activates each controller from our YAML, one after another. -->
+  <node pkg="controller_manager" exec="spawner" output="screen"
+        args="joint_state_broadcaster arm_controller torso_controller gripper_controller
+              head_controller mobile_base_controller ft_sensor_controller
+              -p $(var controllers_config) --controller-manager-timeout 120"/>
+
+  <!-- ===== 5. twist_mux: velocity command gate for the base =====
+       Nav2 publishes on /cmd_vel, the keyboard on /key_vel; twist_mux picks
+       the highest-priority active one (config/my_tiago_twist_mux.yaml) and
+       sends it to the diff drive controller. -->
+  <node pkg="twist_mux" exec="twist_mux" output="log">
+    <param from="$(find-pkg-share my_tiago_bringup)/config/my_tiago_twist_mux.yaml"/>
+    <param name="use_sim_time" value="true"/>
+    <remap from="cmd_vel_out" to="/mobile_base_controller/cmd_vel_unstamped"/>
+  </node>
+
+  <!-- ===== 6. Odometry: EKF (robot_localization) =====
+       The base slips when it turns on the spot, so the wheel odometry heading
+       drifts badly. The EKF fuses the wheel speed with the heading from the
+       base IMU (/base_imu) and publishes the odom -> base_footprint TF
+       (the diff drive controller's own odom TF is switched off in
+       config/my_tiago_controllers.yaml). Output topic: /odometry/filtered -->
+  <node pkg="robot_localization" exec="ekf_node" name="ekf_filter_node" output="log">
+    <param from="$(find-pkg-share my_tiago_bringup)/config/my_tiago_ekf.yaml"/>
+  </node>
+
+</launch>

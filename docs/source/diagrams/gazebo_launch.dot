@@ -1,0 +1,19 @@
+
+digraph G { 
+  graph [fontname="Helvetica", fontsize=11, bgcolor="transparent", pad=0.2, nodesep=0.35, ranksep=0.45];
+  node  [fontname="Helvetica", fontsize=10, shape=box, style="rounded,filled", fillcolor="#eef3f8", color="#1f3a5f", penwidth=1.1];
+  edge  [fontname="Helvetica", fontsize=9, color="#4a5868", arrowsize=0.7];
+
+  rankdir=LR; nodesep=0.12; ranksep=0.5;
+  L [label="my_tiago_gazebo\n.launch.xml", fillcolor="#d9f0e3", shape=folder];
+  env [label="1  set_env GAZEBO_MODEL_PATH, GAZEBO_RESOURCE_PATH", shape=note, fillcolor="#ffffff"];
+  xa  [label="   xacro my_tiago.urdf.xacro use_sim_time:=true is_public_sim:=true", shape=note, fillcolor="#ffffff"];
+  gzs [label="2  gzserver (world) + controller_manager plugin", fillcolor="#f6dede"];
+  gzc [label="2  gzclient (GUI)", fillcolor="#f6dede"];
+  rsp [label="3  robot_state_publisher  ->  /robot_description, TF", fillcolor="#e6e9f5"];
+  sp  [label="4  spawn_entity.py  (reads /robot_description, inserts 'tiago')", fillcolor="#e6e9f5"];
+  spn [label="5  spawner: 7 controllers from my_tiago_controllers.yaml", fillcolor="#e6e9f5"];
+  mux [label="6  twist_mux  (my_tiago_twist_mux.yaml)", fillcolor="#e6e9f5"];
+  ekf [label="7  ekf_filter_node  (my_tiago_ekf.yaml)", fillcolor="#e6e9f5"];
+  L -> {env xa gzs gzc rsp sp spn mux ekf};
+}

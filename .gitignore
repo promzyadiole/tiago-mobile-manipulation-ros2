@@ -1,0 +1,14 @@
+# colcon build output
+build/
+install/
+log/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Editor settings
+.vscode/
+
+# Personal study notes (kept locally, not published)
+docs/reference/

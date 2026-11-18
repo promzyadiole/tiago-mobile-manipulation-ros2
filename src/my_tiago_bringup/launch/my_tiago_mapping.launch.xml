@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!--
+  Build a map of the room with slam_toolbox (online, asynchronous mode).
+  Start the simulation first (my_tiago_gazebo.launch.xml), then this file,
+  then drive the robot around with teleop until the map is complete.
+
+  Usage:
+    ros2 launch my_tiago_bringup my_tiago_mapping.launch.xml
+    ros2 launch my_tiago_bringup my_tiago_mapping.launch.xml rviz:=false
+
+  Save the map (see the notes): nav2_map_server's map_saver_cli, or the
+  "Save Map" button in the SlamToolboxPlugin panel in RViz.
+-->
+<launch>
+
+  <arg name="rviz" default="true" description="Start RViz with the mapping view"/>
+
+  <!-- ===== slam_toolbox =====
+       Subscribes to the laser (/scan_raw) and the odom -> base_footprint TF,
+       publishes the growing /map and the map -> odom TF. -->
+  <include file="$(find-pkg-share slam_toolbox)/launch/online_async_launch.py">
+    <arg name="slam_params_file" value="$(find-pkg-share my_tiago_bringup)/config/slam_toolbox_mapping.yaml"/>
+    <arg name="use_sim_time" value="true"/>
+  </include>
+
+  <!-- ===== RViz: map + laser + robot ===== -->
+  <node pkg="rviz2" exec="rviz2" output="log" if="$(var rviz)"
+        args="-d $(find-pkg-share my_tiago_bringup)/rviz/mapping.rviz">
+    <param name="use_sim_time" value="true"/>
+  </node>
+
+</launch>

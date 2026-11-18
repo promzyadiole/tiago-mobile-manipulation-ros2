@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>my_tiago_bringup</name>
+  <version>0.0.0</version>
+  <description>Bringup (launch + controller config) for the my_tiago simulation</description>
+  <maintainer email="promzy007adiole@yahoo.com">promise</maintainer>
+  <license>Apache-2.0</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <!-- Robot model and MoveIt config -->
+  <exec_depend>my_tiago_description</exec_depend>
+  <exec_depend>my_tiago_moveit_config</exec_depend>
+
+  <!-- Tools started by my_tiago.launch.xml -->
+  <exec_depend>xacro</exec_depend>
+  <exec_depend>robot_state_publisher</exec_depend>
+  <exec_depend>controller_manager</exec_depend>
+  <exec_depend>ros2_control</exec_depend>
+
+  <!-- Controller plugins named in config/my_tiago_controllers.yaml -->
+  <exec_depend>joint_state_broadcaster</exec_depend>
+  <exec_depend>joint_trajectory_controller</exec_depend>
+  <exec_depend>diff_drive_controller</exec_depend>
+  <exec_depend>force_torque_sensor_broadcaster</exec_depend>
+
+  <!-- Gazebo simulation (my_tiago_gazebo.launch.xml) -->
+  <exec_depend>gazebo_ros</exec_depend>
+  <exec_depend>gazebo_ros2_control</exec_depend>
+  <exec_depend>twist_mux</exec_depend>
+  <exec_depend>robot_localization</exec_depend>
+  <exec_depend>ros2_linkattacher</exec_depend>
+
+  <!-- Mapping and navigation (my_tiago_mapping / my_tiago_navigation launch files) -->
+  <exec_depend>slam_toolbox</exec_depend>
+  <exec_depend>nav2_bringup</exec_depend>
+  <exec_depend>nav2_map_server</exec_depend>
+  <exec_depend>nav2_rviz_plugins</exec_depend>
+  <exec_depend>rviz2</exec_depend>
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

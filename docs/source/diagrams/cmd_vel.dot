@@ -1,0 +1,19 @@
+
+digraph G { 
+  graph [fontname="Helvetica", fontsize=11, bgcolor="transparent", pad=0.2, nodesep=0.35, ranksep=0.45];
+  node  [fontname="Helvetica", fontsize=10, shape=box, style="rounded,filled", fillcolor="#eef3f8", color="#1f3a5f", penwidth=1.1];
+  edge  [fontname="Helvetica", fontsize=9, color="#4a5868", arrowsize=0.7];
+
+  rankdir=TB; nodesep=0.5; ranksep=0.45;
+  nav [label="Nav2\nvelocity_smoother, behavior_server", fillcolor="#e6e9f5"];
+  tel [label="teleop_twist_keyboard\n-r cmd_vel:=/key_vel", fillcolor="#e6e9f5"];
+  mux [label="twist_mux\nhighest active priority wins (timeout 0.5 s)", fillcolor="#d9f0e3"];
+  dd  [label="mobile_base_controller (DiffDriveController)\nspeed and acceleration limits", fillcolor="#e6e9f5"];
+  wh  [label="wheel joints (Gazebo)", fillcolor="#f6dede"];
+  out [label="/mobile_base_controller/cmd_vel_out\n(the limited command actually applied)", shape=ellipse, fillcolor="#ffffff"];
+  nav -> mux [label=" /cmd_vel   priority 10"];
+  tel -> mux [label=" /key_vel   priority 90"];
+  mux -> dd [label=" cmd_vel_out remapped to\n /mobile_base_controller/cmd_vel_unstamped"];
+  dd -> wh [label=" wheel velocities"];
+  dd -> out [style=dashed];
+}

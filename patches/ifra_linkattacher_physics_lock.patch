@@ -1,0 +1,57 @@
+diff --git a/ros2_LinkAttacher/src/gazebo_link_attacher.cpp b/ros2_LinkAttacher/src/gazebo_link_attacher.cpp
+index 24b86b8..8c77365 100644
+--- a/ros2_LinkAttacher/src/gazebo_link_attacher.cpp
++++ b/ros2_LinkAttacher/src/gazebo_link_attacher.cpp
+@@ -173,6 +173,14 @@ void GazeboLinkAttacherPrivate::Attach(
+ 
+   } else {
+ 
++    // my_tiago patch: pause the world while the joint is created. This
++    // service runs in the ROS thread, in parallel with Gazebo's physics
++    // thread; changing joints while physics steps can crash gzserver.
++    // SetPaused() waits for the current step to finish (Model::RemoveJoint
++    // uses the same mechanism).
++    const bool was_paused = world_->IsPaused();
++    world_->SetPaused(true);
++
+     // Create a fixed joint between the two links:
+     JointName = _req->model1_name + "_" + _req->link1_name + "_" + _req->model2_name + "_" + _req->link2_name + "_joint";
+     gazebo::physics::JointPtr joint = model1->CreateJoint(JointName, "revolute", link1, link2);
+@@ -206,6 +214,7 @@ void GazeboLinkAttacherPrivate::Attach(
+     _res->message = "ATTACHED: {MODEL , LINK} -> {" + _req->model1_name + " , " + _req->link1_name + "} -- {" + _req->model2_name + " , " + _req->link2_name + "}.";
+ 
+     IsAttached = true;
++    world_->SetPaused(was_paused);
+ 
+   }
+ 
+@@ -219,6 +228,11 @@ void GazeboLinkAttacherPrivate::Detach(
+   // CHECK if -> Joint already exists in GV_joints:
+   JointSTRUCT j;
+   if (this->getJoint(_req->model1_name, _req->link1_name, _req->model2_name, _req->link2_name, j)){
++    // my_tiago patch: pause the world (see Attach), and remove the joint
++    // from GV_joints. Without the erase, attaching the same object again
++    // made getJoint() return the old, already removed joint.
++    const bool was_paused = world_->IsPaused();
++    world_->SetPaused(true);
+     j.joint->Detach();
+     _res->success = true;
+     _res->message = "DETACHED: {MODEL , LINK} -> {" + _req->model1_name + " , " + _req->link1_name + "} -- {" + _req->model2_name + " , " + _req->link2_name + "}.";
+@@ -226,9 +240,16 @@ void GazeboLinkAttacherPrivate::Detach(
+     // (+) Remove joint --> This fixes the following problem: If the object to be attached is removed and spawned again, 
+     // gazebo breaks when attaching it again, since the joint already existed. Joint must be REMOVED when detaching.
+     gazebo::physics::ModelPtr model1 = world_->ModelByName(_req->model1_name);
+-    model1->RemoveJoint(JointName);
++    model1->RemoveJoint(j.joint->GetName());
++    for (auto it = GV_joints.begin(); it != GV_joints.end(); ++it) {
++      if (it->joint == j.joint) {
++        GV_joints.erase(it);
++        break;
++      }
++    }
+ 
+     IsAttached = false;
++    world_->SetPaused(was_paused);
+     
+     return;
+   } else {

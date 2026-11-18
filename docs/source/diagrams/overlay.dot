@@ -1,0 +1,13 @@
+
+digraph G { 
+  graph [fontname="Helvetica", fontsize=11, bgcolor="transparent", pad=0.2, nodesep=0.35, ranksep=0.45];
+  node  [fontname="Helvetica", fontsize=10, shape=box, style="rounded,filled", fillcolor="#eef3f8", color="#1f3a5f", penwidth=1.1];
+  edge  [fontname="Helvetica", fontsize=9, color="#4a5868", arrowsize=0.7];
+
+  rankdir=LR;
+  q [label="$(find tiago_description)\nros2 pkg prefix tiago_description", shape=note, fillcolor="#ffffff"];
+  ws [label="1st: ~/my_tiago_ws/install/tiago_description\n(overlay, built from pal_description_overlay)", fillcolor="#d9f0e3"];
+  opt [label="2nd: /opt/ros/humble/share/tiago_description\n(underlay, apt package)", fillcolor="#eeeeee", fontcolor="#777777", color="#999999"];
+  q -> ws [label=" found first in\n AMENT_PREFIX_PATH", color="#2e7d4f", fontcolor="#2e7d4f", penwidth=1.6];
+  q -> opt [label=" shadowed\n (never used)", style=dashed, color="#999999", fontcolor="#999999"];
+}

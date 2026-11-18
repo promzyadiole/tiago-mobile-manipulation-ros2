@@ -1,0 +1,20 @@
+
+digraph G { 
+  graph [fontname="Helvetica", fontsize=11, bgcolor="transparent", pad=0.2, nodesep=0.35, ranksep=0.45];
+  node  [fontname="Helvetica", fontsize=10, shape=box, style="rounded,filled", fillcolor="#eef3f8", color="#1f3a5f", penwidth=1.1];
+  edge  [fontname="Helvetica", fontsize=9, color="#4a5868", arrowsize=0.7];
+
+  rankdir=LR; nodesep=0.18; ranksep=0.35;
+  subgraph cluster_b { label="AFTER: the entry is erased on detach"; fontcolor="#1e8449"; style="rounded"; color="#1e8449";
+    y1 [label="1st attach\nJ1 created, stored", fillcolor="#d9f0e3"];
+    y2 [label="detach\nRemoveJoint(J1) +\nGV_joints.erase(J1)", fillcolor="#d9f0e3"];
+    y3 [label="2nd attach\nnew joint J2, stored;\ndetach removes J2", fillcolor="#d9f0e3"];
+    y1 -> y2 -> y3;
+  }
+  subgraph cluster_a { label="BEFORE: the list keeps a deleted joint"; fontcolor="#c0392b"; style="rounded"; color="#c0392b";
+    x1 [label="1st attach\njoint J1 created,\nstored in GV_joints", fillcolor="#e6e9f5"];
+    x2 [label="detach\nJ1 removed from Gazebo,\nbut still in GV_joints", fillcolor="#f6dede"];
+    x3 [label="2nd attach, then detach\ngetJoint() finds the OLD J1\n-> works on a deleted joint", fillcolor="#f6dede"];
+    x1 -> x2 -> x3;
+  }
+}

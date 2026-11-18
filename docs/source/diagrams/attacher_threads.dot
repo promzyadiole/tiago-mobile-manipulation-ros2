@@ -1,0 +1,33 @@
+
+digraph G { 
+  graph [fontname="Helvetica", fontsize=11, bgcolor="transparent", pad=0.2, nodesep=0.35, ranksep=0.45];
+  node  [fontname="Helvetica", fontsize=10, shape=box, style="rounded,filled", fillcolor="#eef3f8", color="#1f3a5f", penwidth=1.1];
+  edge  [fontname="Helvetica", fontsize=9, color="#4a5868", arrowsize=0.7];
+
+  rankdir=TB; nodesep=0.25; ranksep=0.32; newrank=true;
+  subgraph cluster_a { label="(a) BEFORE the patch: two threads change the same joints"; fontcolor="#c0392b";
+    style="rounded"; color="#c0392b";
+    a1 [label="ROS service thread\n/DETACHLINK\n-> joint->Detach(), RemoveJoint()", fillcolor="#e6e9f5"];
+    a2 [label="Gazebo physics thread\nstep: reads every joint\n(1000 steps per second)", fillcolor="#f6dede"];
+    a3 [label="the joint is deleted\nin the middle of a step", shape=box, style="rounded,filled", fillcolor="#f6dede", color="#c0392b"];
+    a4 [label="gzserver freezes or crashes", shape=octagon, style="filled", fillcolor="#c0392b", fontcolor="white"];
+    a1 -> a3; a2 -> a3; a3 -> a4;
+  }
+  subgraph cluster_b { label="(b) FIRST FIX (rejected): hold the physics mutex"; fontcolor="#d35400";
+    style="rounded"; color="#d35400";
+    b1 [label="service thread\nholds the physics mutex,\ncalls RemoveJoint()", fillcolor="#e6e9f5"];
+    b2 [label="RemoveJoint() calls SetPaused():\nwaits for the world-update lock", fillcolor="#e6e9f5"];
+    b3 [label="physics thread holds the\nworld-update lock, waits\nfor the physics mutex", fillcolor="#f6dede"];
+    b4 [label="DEADLOCK:\neach waits for the other", shape=octagon, style="filled", fillcolor="#d35400", fontcolor="white"];
+    b1 -> b2; b2 -> b3 [label=" waits for"]; b3 -> b1 [label=" waits for"]; b3 -> b4 [style=dashed];
+  }
+  subgraph cluster_c { label="(c) THE PATCH: pause the world around the joint change"; fontcolor="#1e8449";
+    style="rounded"; color="#1e8449";
+    c1 [label="was_paused = world_->IsPaused()", fillcolor="#d9f0e3"];
+    c2 [label="world_->SetPaused(true)\nreturns only after the\ncurrent physics step has ended", fillcolor="#d9f0e3"];
+    c3 [label="create the joint (attach) or\nDetach() + RemoveJoint() (detach)\nwhile no step runs", fillcolor="#d9f0e3"];
+    c4 [label="world_->SetPaused(was_paused)\nphysics continues", fillcolor="#d9f0e3"];
+    c1 -> c2 -> c3 -> c4;
+  }
+  { rank=same; a1; b1; c1; }
+}

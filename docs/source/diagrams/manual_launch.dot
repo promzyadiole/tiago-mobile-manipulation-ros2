@@ -1,0 +1,36 @@
+
+digraph G { 
+  graph [fontname="Helvetica", fontsize=11, bgcolor="transparent", pad=0.2, nodesep=0.35, ranksep=0.45];
+  node  [fontname="Helvetica", fontsize=10, shape=box, style="rounded,filled", fillcolor="#eef3f8", color="#1f3a5f", penwidth=1.1];
+  edge  [fontname="Helvetica", fontsize=9, color="#4a5868", arrowsize=0.7];
+
+  rankdir=LR; nodesep=0.14; ranksep=0.55;
+  subgraph cluster_cmd { label="terminal commands (section 7.4)"; style="rounded,dashed"; color="#8899aa"; fontsize=10;
+    t1 [label="T1  gzserver my_tiago_room.world\n-s libgazebo_ros_init/factory/force_system", fillcolor="#f6dede"];
+    t2 [label="T2  gzclient", fillcolor="#f6dede"];
+    t3 [label="T3  ros2 run robot_state_publisher\n-p robot_description:=\"$(xacro ...)\"", fillcolor="#e6e9f5"];
+    t4 [label="T4  ros2 run gazebo_ros spawn_entity.py\n-topic robot_description -entity tiago", fillcolor="#e6e9f5"];
+    t5 [label="T5  ros2 run controller_manager spawner\n7 controllers -p my_tiago_controllers.yaml", fillcolor="#e6e9f5"];
+    t6 [label="T6  ros2 run twist_mux twist_mux", fillcolor="#e6e9f5"];
+    t7 [label="T7  ros2 run robot_localization ekf_node", fillcolor="#e6e9f5"];
+    { rank=same; t1; t2; t3; t4; t5; t6; t7; }
+    t1 -> t2 -> t3 -> t4 -> t5 -> t6 -> t7 [style=invis];
+  }
+  node [shape=ellipse, fillcolor="#ffffff"];
+  gz   [label="/gazebo\n(+ /spawn_entity service)", fillcolor="#f6dede"];
+  cm   [label="/controller_manager\n(gazebo_ros2_control plugin,\nstarts after the spawn)", fillcolor="#f6dede"];
+  rsp  [label="/robot_state_publisher"];
+  ctrl [label="7 controllers:\njoint_state_broadcaster, arm, torso,\ngripper, head, mobile_base, ft_sensor", fillcolor="#f6dede"];
+  mux  [label="/twist_mux"];
+  ekf  [label="/ekf_filter_node"];
+  node [shape=box, style="filled", fillcolor="#ffffff", color="#8899aa", fontsize=9];
+  rd [label="/robot_description"]; js [label="/joint_states"]; tf [label="/tf, /tf_static"];
+  clk [label="/clock"]; imu [label="/base_imu"]; cv [label="/mobile_base_controller/\ncmd_vel_unstamped"];
+  kv [label="/cmd_vel, /key_vel"]; od [label="/mobile_base_controller/odom"]; of [label="/odometry/filtered"];
+  t1 -> gz [style=dashed]; t2 -> gz [style=dashed, label="GUI of"]; t3 -> rsp [style=dashed];
+  t4 -> gz [style=dashed, label="calls /spawn_entity"]; t5 -> ctrl [style=dashed, label="load + activate"];
+  t6 -> mux [style=dashed]; t7 -> ekf [style=dashed];
+  rsp -> rd; rd -> t4 [label="URDF"]; gz -> cm [label="robot spawned"]; cm -> ctrl;
+  gz -> clk; gz -> imu; ctrl -> js; js -> rsp; rsp -> tf;
+  kv -> mux; mux -> cv; cv -> ctrl; ctrl -> od; od -> ekf; imu -> ekf; ekf -> of; ekf -> tf [label="odom->base_footprint"];
+}

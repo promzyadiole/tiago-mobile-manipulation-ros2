@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!--
+  MoveIt for the Gazebo simulation.
+  Start the simulation first (my_tiago_gazebo.launch.xml); its controllers
+  (arm, torso, gripper, head) execute the trajectories MoveIt plans.
+
+  Starts:
+    move_group   planning + execution (my_tiago_moveit_config), simulated time
+    rviz2        MoveIt MotionPlanning view (optional)
+
+  Usage:
+    ros2 launch my_tiago_bringup my_tiago_moveit_sim.launch.xml
+    ros2 launch my_tiago_bringup my_tiago_moveit_sim.launch.xml rviz:=false
+-->
+<launch>
+
+  <arg name="rviz" default="true" description="Start RViz with the MoveIt MotionPlanning panel"/>
+
+  <!-- The generated MoveIt launch files have no use_sim_time argument.
+       set_parameter adds use_sim_time to every node started inside this group,
+       including the ones in the included Python launch files. Without it
+       move_group uses wall-clock time while /joint_states and TF carry Gazebo
+       time, and it rejects the robot state as too old. -->
+  <group>
+    <set_parameter name="use_sim_time" value="true"/>
+
+    <!-- ===== move_group ===== -->
+    <include file="$(find-pkg-share my_tiago_moveit_config)/launch/move_group.launch.py"/>
+
+    <!-- ===== RViz with MotionPlanning ===== -->
+    <include file="$(find-pkg-share my_tiago_moveit_config)/launch/moveit_rviz.launch.py" if="$(var rviz)"/>
+  </group>
+
+</launch>

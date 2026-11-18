@@ -1,0 +1,16 @@
+
+digraph G { 
+  graph [fontname="Helvetica", fontsize=11, bgcolor="transparent", pad=0.2, nodesep=0.35, ranksep=0.45];
+  node  [fontname="Helvetica", fontsize=10, shape=box, style="rounded,filled", fillcolor="#eef3f8", color="#1f3a5f", penwidth=1.1];
+  edge  [fontname="Helvetica", fontsize=9, color="#4a5868", arrowsize=0.7];
+
+  rankdir=TB; nodesep=0.3; ranksep=0.25;
+  q1 [label="look at the corner table, detect table + objects already there", fillcolor="#d9f0e3"];
+  q2 [label="choose a spot: inside the outline (10 cm margin), 14 cm from objects,\nnot behind an object, closest to 18 cm behind the edge, slightly right", fillcolor="#d9f0e3"];
+  q3 [label="for each approach direction: pre-place 10 cm above (MoveIt)\n-> straight down to 1.5 cm above the table (Cartesian)", fillcolor="#d9f0e3"];
+  q4 [label="release: /DETACHLINK -> open -> detach in MoveIt", fillcolor="#f6dede"];
+  q5 [label="retreat: straight up until the fingers are 5 cm above the object's top,\nthen back 20 cm (MoveIt plan if the straight lift is refused)", fillcolor="#d9f0e3"];
+  q6 [label="placed object becomes an obstacle; head up; stow the arm\nwith the scene still in place; then clear the scene", fillcolor="#d9f0e3"];
+  q7 [label="camera check: object on the table?", fillcolor="#e6e9f5"];
+  q1 -> q2 -> q3 -> q4 -> q5 -> q6 -> q7;
+}

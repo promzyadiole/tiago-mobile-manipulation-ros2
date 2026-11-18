@@ -1,0 +1,28 @@
+
+digraph G { 
+  graph [fontname="Helvetica", fontsize=11, bgcolor="transparent", pad=0.2, nodesep=0.35, ranksep=0.45];
+  node  [fontname="Helvetica", fontsize=10, shape=box, style="rounded,filled", fillcolor="#eef3f8", color="#1f3a5f", penwidth=1.1];
+  edge  [fontname="Helvetica", fontsize=9, color="#4a5868", arrowsize=0.7];
+
+  rankdir=LR; nodesep=0.12; ranksep=0.45;
+  fjt [label="<controller>/follow_joint_trajectory\n(action, used by MoveIt)", shape=ellipse, fillcolor="#ffffff"];
+  cv [label="/mobile_base_controller/\ncmd_vel_unstamped", shape=ellipse, fillcolor="#ffffff"];
+  js [label="/joint_states", shape=ellipse, fillcolor="#ffffff"];
+  wr [label="/ft_sensor_controller/wrench", shape=ellipse, fillcolor="#ffffff"];
+  od [label="/mobile_base_controller/odom", shape=ellipse, fillcolor="#ffffff"];
+  subgraph cluster_cm { label="controller_manager, 100 Hz\n(inside gzserver)"; style="rounded"; color="#1f3a5f";
+    jsb [label="joint_state_broadcaster", fillcolor="#e6e9f5"];
+    ftb [label="ft_sensor_controller", fillcolor="#e6e9f5"];
+    arm [label="arm_controller", fillcolor="#e6e9f5"];
+    tor [label="torso_controller", fillcolor="#e6e9f5"];
+    grp [label="gripper_controller", fillcolor="#e6e9f5"];
+    hd  [label="head_controller", fillcolor="#e6e9f5"];
+    dd  [label="mobile_base_controller", fillcolor="#e6e9f5"];
+  }
+  hw [label="Hardware interface\nGazeboSystem\n\ncommand:\nposition / velocity\n\nstate:\nposition, velocity,\neffort, F/T", fillcolor="#f6dede", shape=box3d, height=3.2];
+  js -> jsb [dir=back]; wr -> ftb [dir=back];
+  fjt -> arm; fjt -> tor; fjt -> grp; fjt -> hd;
+  cv -> dd; od -> dd [dir=back];
+  {jsb ftb} -> hw [dir=back, color="#999999"];
+  {arm tor grp hd dd} -> hw [dir=both, color="#999999"];
+}

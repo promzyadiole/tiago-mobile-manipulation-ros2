@@ -1,0 +1,37 @@
+# robot_localization EKF: odometry for Tiago's base (publishes odom -> base_footprint).
+#
+# Wheel odometry alone is unreliable in this simulation: the PMB2 base slips a
+# lot when turning on the spot, so the wheel-integrated heading drifts by tens
+# of degrees (once by ~180 deg), and every later forward motion is then
+# integrated in the wrong direction. The heading is therefore taken from the
+# base IMU (gyroscope) and only the forward speed from the wheels.
+ekf_filter_node:
+  ros__parameters:
+    use_sim_time: true
+    frequency: 50.0
+    sensor_timeout: 0.2
+    two_d_mode: true                 # planar robot: ignore z, roll, pitch
+    publish_tf: true
+    map_frame: map
+    odom_frame: odom
+    base_link_frame: base_footprint
+    world_frame: odom                # this EKF is the odom-level estimator
+
+    # Wheel odometry: use only the forward and sideways velocity
+    #            x      y      z      roll   pitch  yaw
+    #            vx     vy     vz     vroll  vpitch vyaw
+    #            ax     ay     az
+    odom0: /mobile_base_controller/odom
+    odom0_config: [false, false, false,  false, false, false,
+                   true,  true,  false,  false, false, false,
+                   false, false, false]
+    odom0_differential: false
+
+    # Base IMU: absolute yaw (relative to the start) and yaw rate
+    imu0: /base_imu
+    imu0_config: [false, false, false,  false, false, true,
+                  false, false, false,  false, false, true,
+                  false, false, false]
+    imu0_relative: true              # heading starts at 0 like the odom frame
+    imu0_differential: false
+    imu0_remove_gravitational_acceleration: true

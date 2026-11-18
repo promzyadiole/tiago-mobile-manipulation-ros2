@@ -1,0 +1,20 @@
+
+digraph G { 
+  graph [fontname="Helvetica", fontsize=11, bgcolor="transparent", pad=0.2, nodesep=0.35, ranksep=0.45];
+  node  [fontname="Helvetica", fontsize=10, shape=box, style="rounded,filled", fillcolor="#eef3f8", color="#1f3a5f", penwidth=1.1];
+  edge  [fontname="Helvetica", fontsize=9, color="#4a5868", arrowsize=0.7];
+
+  rankdir=TB; nodesep=0.3; ranksep=0.25;
+  p1 [label="look at the table, detect table + objects", fillcolor="#d9f0e3"];
+  p2 [label="object front-right of the base?\n(0.70 m ahead, 0.10 m right, +-0.12 m)", shape=diamond, style="filled", fillcolor="#ffffff"];
+  p2b [label="back up, drive to a pose computed from the\nobject's map position, detect again", fillcolor="#e6e9f5"];
+  p3 [label="MoveIt scene: table box + objects (cylinders)", fillcolor="#d9f0e3"];
+  p4 [label="for each approach direction (handle-aware, then line of sight, 0, +-17 deg):\npre-grasp 15 cm before the object (MoveIt plan)\n-> straight approach (Cartesian, IK-flip guard)", fillcolor="#d9f0e3"];
+  p5 [label="close the fingers 4 mm short of the surface\n-> weld in Gazebo (/ATTACHLINK) -> attach in MoveIt", fillcolor="#f6dede"];
+  p6 [label="lift 10 cm (Cartesian)", fillcolor="#d9f0e3"];
+  p7 [label="camera check: table seen and object gone?", shape=diamond, style="filled", fillcolor="#ffffff"];
+  ok [label="picked: (object, grasp height)", fillcolor="#e6e9f5"];
+  no [label="detach, open, back off -> retry (up to 3 attempts)", fillcolor="#fbe7e5"];
+  p1 -> p2; p2 -> p3 [label=" yes"]; p2 -> p2b [label=" no"]; p2b -> p3;
+  p3 -> p4 -> p5 -> p6 -> p7; p7 -> ok [label=" yes"]; p7 -> no [label=" no"];
+}

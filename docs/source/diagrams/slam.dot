@@ -1,0 +1,16 @@
+
+digraph G { 
+  graph [fontname="Helvetica", fontsize=11, bgcolor="transparent", pad=0.2, nodesep=0.35, ranksep=0.45];
+  node  [fontname="Helvetica", fontsize=10, shape=box, style="rounded,filled", fillcolor="#eef3f8", color="#1f3a5f", penwidth=1.1];
+  edge  [fontname="Helvetica", fontsize=9, color="#4a5868", arrowsize=0.7];
+
+  rankdir=TB; nodesep=0.4; ranksep=0.35;
+  laser [label="/scan_raw (laser, 10 Hz)", shape=ellipse, fillcolor="#fff6c9"];
+  tf [label="TF odom -> base_footprint (EKF)", shape=ellipse, fillcolor="#ffffff"];
+  st [label="slam_toolbox (online_async)\nscan matching + pose graph + loop closure (Ceres)", fillcolor="#e6e9f5"];
+  map [label="/map  (OccupancyGrid, 0.05 m)", shape=ellipse, fillcolor="#ffffff"];
+  tf2 [label="TF map -> odom", shape=ellipse, fillcolor="#ffffff"];
+  ms [label="map_saver_cli -> maps/my_tiago_room.pgm + .yaml", fillcolor="#d9f0e3"];
+  rv [label="RViz (mapping.rviz)", fillcolor="#e6e9f5"];
+  laser -> st; tf -> st; st -> map; st -> tf2; map -> ms; map -> rv;
+}

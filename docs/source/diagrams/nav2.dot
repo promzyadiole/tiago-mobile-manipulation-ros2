@@ -1,0 +1,26 @@
+
+digraph G { 
+  graph [fontname="Helvetica", fontsize=11, bgcolor="transparent", pad=0.2, nodesep=0.35, ranksep=0.45];
+  node  [fontname="Helvetica", fontsize=10, shape=box, style="rounded,filled", fillcolor="#eef3f8", color="#1f3a5f", penwidth=1.1];
+  edge  [fontname="Helvetica", fontsize=9, color="#4a5868", arrowsize=0.7];
+
+  rankdir=TB; nodesep=0.3; ranksep=0.4;
+  goal [label="Goal: RViz 'Nav2 Goal' or go_to_pose.py", fillcolor="#d9f0e3"];
+  subgraph cluster_loc { label="localization"; style="rounded"; color="#1f3a5f";
+    ms [label="map_server\nmy_tiago_room.yaml", fillcolor="#e6e9f5"];
+    amcl [label="amcl\nparticle filter", fillcolor="#e6e9f5"];
+  }
+  subgraph cluster_nav { label="navigation"; style="rounded"; color="#1f3a5f";
+    bt [label="bt_navigator\nnavigate_to_pose.xml", fillcolor="#e6e9f5"];
+    pl [label="planner_server\nNavFn + global costmap", fillcolor="#e6e9f5"];
+    ct [label="controller_server\nDWB + local costmap", fillcolor="#e6e9f5"];
+    bh [label="behavior_server\nwait / backup / spin", fillcolor="#e6e9f5"];
+    sm [label="velocity_smoother", fillcolor="#e6e9f5"];
+  }
+  mux [label="twist_mux -> base controller", fillcolor="#d9f0e3"];
+  goal -> bt [label=" NavigateToPose action"];
+  ms -> amcl [label=" /map"];
+  amcl -> bt [label=" TF map->odom", style=dashed];
+  bt -> pl [label=" ComputePathToPose"]; bt -> ct [label=" FollowPath"]; bt -> bh [label=" recovery"];
+  ct -> sm [label=" cmd_vel_nav"]; sm -> mux [label=" /cmd_vel"]; bh -> mux [label=" /cmd_vel"];
+}

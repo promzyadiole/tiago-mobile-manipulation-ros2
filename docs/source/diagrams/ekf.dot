@@ -1,0 +1,17 @@
+
+digraph G { 
+  graph [fontname="Helvetica", fontsize=11, bgcolor="transparent", pad=0.2, nodesep=0.35, ranksep=0.45];
+  node  [fontname="Helvetica", fontsize=10, shape=box, style="rounded,filled", fillcolor="#eef3f8", color="#1f3a5f", penwidth=1.1];
+  edge  [fontname="Helvetica", fontsize=9, color="#4a5868", arrowsize=0.7];
+
+  rankdir=TB; nodesep=0.5; ranksep=0.4;
+  odom [label="/mobile_base_controller/odom\n(wheel odometry)", shape=ellipse, fillcolor="#ffffff"];
+  imu  [label="/base_imu\n(IMU, 100 Hz)", shape=ellipse, fillcolor="#fff6c9"];
+  ekf  [label="ekf_filter_node (robot_localization), 50 Hz, two_d_mode\npredict with motion model, update with each measurement", fillcolor="#d9f0e3"];
+  out  [label="/odometry/filtered", shape=ellipse, fillcolor="#ffffff"];
+  tf   [label="TF odom -> base_footprint", shape=ellipse, fillcolor="#ffffff"];
+  amcl [label="AMCL: laser + map -> TF map -> odom", fillcolor="#e6e9f5"];
+  odom -> ekf [label=" vx, vy only\n (wheels slip when turning)"];
+  imu  -> ekf [label=" yaw, yaw rate\n (relative to start)"];
+  ekf -> out; ekf -> tf; tf -> amcl [label=" motion prediction"];
+}

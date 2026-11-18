@@ -1,0 +1,18 @@
+
+digraph G { 
+  graph [fontname="Helvetica", fontsize=11, bgcolor="transparent", pad=0.2, nodesep=0.35, ranksep=0.45];
+  node  [fontname="Helvetica", fontsize=10, shape=box, style="rounded,filled", fillcolor="#eef3f8", color="#1f3a5f", penwidth=1.1];
+  edge  [fontname="Helvetica", fontsize=9, color="#4a5868", arrowsize=0.7];
+
+  rankdir=TB; nodesep=0.35; ranksep=0.3; node [fillcolor="#d9f0e3"];
+  s [label="start\n(room corner)\nstow arm", fillcolor="#e6e9f5"];
+  a [label="drive to the\nmiddle table"];
+  b [label="pick\n(section 15)"];
+  c [label="carry pose,\nback up"];
+  d [label="drive to the\ncorner table"];
+  e [label="place\n(section 15)"];
+  f [label="next object?", shape=diamond, style="filled", fillcolor="#ffffff"];
+  g [label="result:\nbottle=placed,\ncup=placed", fillcolor="#e6e9f5"];
+  {rank=same; a; b; c} {rank=same; d; e; f}
+  s -> a -> b -> c; c -> d; d -> e -> f; f -> a [label=" cup (back up first)"]; f -> g [label=" done"];
+}

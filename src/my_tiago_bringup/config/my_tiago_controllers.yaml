@@ -1,0 +1,116 @@
+# Controller configuration for the my_tiago Gazebo simulation.
+# Values taken from PAL's tiago_controller_configuration, pmb2_controller_configuration
+# and pal_gripper_controller_configuration (public simulation).
+# Loaded by the controller manager (its own block) and by the controller
+# spawners in my_tiago_bringup (with --param-file).
+
+# ---------------------------------------------------------------- controller manager
+controller_manager:
+  ros__parameters:
+    update_rate: 100   # Hz, control loop rate
+
+# ---------------------------------------------------------------- state
+joint_state_broadcaster:
+  ros__parameters:
+    type: joint_state_broadcaster/JointStateBroadcaster
+
+ft_sensor_controller:
+  ros__parameters:
+    type: force_torque_sensor_broadcaster/ForceTorqueSensorBroadcaster
+    frame_id: wrist_ft_link
+    sensor_name: wrist_ft_sensor
+
+# ---------------------------------------------------------------- mobile base
+mobile_base_controller:
+  ros__parameters:
+    type: diff_drive_controller/DiffDriveController
+    use_stamped_vel: false
+    left_wheel_names: ['wheel_left_joint']
+    right_wheel_names: ['wheel_right_joint']
+    wheel_radius: 0.0985
+    wheel_separation: 0.4044
+    wheel_separation_multiplier: 1.0
+    left_wheel_radius_multiplier: 1.0
+    right_wheel_radius_multiplier: 1.0
+    publish_rate: 50.0
+    pose_covariance_diagonal: [0.001, 0.001, 0.001, 0.001, 0.001, 0.01]
+    twist_covariance_diagonal: [0.001, 0.001, 0.001, 0.001, 0.001, 0.01]
+    cmd_vel_timeout: 0.25
+    base_frame_id: base_footprint
+    odom_frame_id: odom
+    enable_odom_tf: false       # the EKF (config/my_tiago_ekf.yaml) publishes odom -> base_footprint
+    publish_limited_velocity: true
+    linear:
+      x:
+        has_velocity_limits: true
+        max_velocity: 1.0       # m/s
+        min_velocity: -0.2      # m/s
+        has_acceleration_limits: true
+        max_acceleration: 0.5   # m/s^2
+    angular:
+      z:
+        has_velocity_limits: true
+        max_velocity: 1.05      # rad/s (60 deg/s)
+        has_acceleration_limits: true
+        max_acceleration: 1.05  # rad/s^2
+
+# ---------------------------------------------------------------- torso
+torso_controller:
+  ros__parameters:
+    type: joint_trajectory_controller/JointTrajectoryController
+    joints: [torso_lift_joint]
+    command_interfaces: [position]
+    state_interfaces: [position]
+    interpolate_from_desired_state: true
+    constraints:
+      goal_time: 0.6
+      stopped_velocity_tolerance: 5.0
+      torso_lift_joint: {goal: 0.02}
+
+# ---------------------------------------------------------------- arm
+arm_controller:
+  ros__parameters:
+    type: joint_trajectory_controller/JointTrajectoryController
+    joints: [arm_1_joint, arm_2_joint, arm_3_joint, arm_4_joint,
+             arm_5_joint, arm_6_joint, arm_7_joint]
+    command_interfaces: [position]
+    state_interfaces: [position]
+    interpolate_from_desired_state: true
+    constraints:
+      goal_time: 0.6
+      stopped_velocity_tolerance: 5.0
+      arm_1_joint: {goal: 0.02}
+      arm_2_joint: {goal: 0.02}
+      arm_3_joint: {goal: 0.02}
+      arm_4_joint: {goal: 0.02}
+      arm_5_joint: {goal: 0.02}
+      arm_6_joint: {goal: 0.02}
+      arm_7_joint: {goal: 0.02}
+
+# ---------------------------------------------------------------- gripper
+gripper_controller:
+  ros__parameters:
+    type: joint_trajectory_controller/JointTrajectoryController
+    joints: [gripper_left_finger_joint, gripper_right_finger_joint]
+    command_interfaces: [position]
+    state_interfaces: [position]
+    interpolate_from_desired_state: true
+    constraints:
+      goal_time: 0.6
+      stopped_velocity_tolerance: 5.0
+      gripper_left_finger_joint: {goal: 0.02}
+      gripper_right_finger_joint: {goal: 0.02}
+
+# ---------------------------------------------------------------- head
+head_controller:
+  ros__parameters:
+    type: joint_trajectory_controller/JointTrajectoryController
+    joints: [head_1_joint, head_2_joint]
+    command_interfaces: [position]
+    state_interfaces: [position]
+    interpolate_from_desired_state: true
+    constraints:
+      goal_time: 2.0
+      stopped_velocity_tolerance: 5.0
+      head_1_joint: {goal: 0.5}
+      head_2_joint: {goal: 0.5}

@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<!--
+  Navigate my_tiago on the saved SLAM map with Nav2.
+  Start the simulation first (my_tiago_gazebo.launch.xml), then this file.
+  Do NOT run the mapping launch at the same time: slam_toolbox and AMCL would
+  both publish the map to odom transform.
+
+  Starts:
+    map_server + AMCL                    load maps/my_tiago_room.yaml and localise on it
+    planner, controller, bt_navigator,   plan a path and drive the base
+    behaviours, smoother, waypoints
+    rviz2                                Nav2 view: "2D Pose Estimate" and "Nav2 Goal"
+
+  Usage:
+    ros2 launch my_tiago_bringup my_tiago_navigation.launch.xml
+    ros2 launch my_tiago_bringup my_tiago_navigation.launch.xml map:=/full/path/other_map.yaml
+-->
+<launch>
+
+  <!-- ===== Arguments ===== -->
+  <arg name="map" default="$(find-pkg-share my_tiago_bringup)/maps/my_tiago_room.yaml"
+       description="Map yaml file saved with map_saver_cli"/>
+  <arg name="params_file" default="$(find-pkg-share my_tiago_bringup)/config/my_tiago_nav2_params.yaml"/>
+  <arg name="rviz" default="true" description="Start RViz with the Nav2 view"/>
+
+  <!-- ===== Nav2 =====
+       nav2_bringup's bringup_launch.py starts localisation (map_server, amcl)
+       and navigation (planner, controller, ...) with lifecycle managers that
+       configure and activate every node (autostart).
+       slam False: use the saved map instead of building one.
+       use_composition False: one process per node, easier to read in the logs. -->
+  <include file="$(find-pkg-share nav2_bringup)/launch/bringup_launch.py">
+    <arg name="map" value="$(var map)"/>
+    <arg name="params_file" value="$(var params_file)"/>
+    <arg name="use_sim_time" value="true"/>
+    <arg name="slam" value="False"/>
+    <arg name="autostart" value="true"/>
+    <arg name="use_composition" value="False"/>
+  </include>
+
+  <!-- ===== RViz: map, laser, AMCL particles, costmaps, planned path ===== -->
+  <node pkg="rviz2" exec="rviz2" output="log" if="$(var rviz)"
+        args="-d $(find-pkg-share my_tiago_bringup)/rviz/navigation.rviz">
+    <param name="use_sim_time" value="true"/>
+  </node>
+
+</launch>

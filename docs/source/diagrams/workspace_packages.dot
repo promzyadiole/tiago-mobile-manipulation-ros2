@@ -1,0 +1,37 @@
+
+digraph G { 
+  graph [fontname="Helvetica", fontsize=11, bgcolor="transparent", pad=0.2, nodesep=0.35, ranksep=0.45];
+  node  [fontname="Helvetica", fontsize=10, shape=box, style="rounded,filled", fillcolor="#eef3f8", color="#1f3a5f", penwidth=1.1];
+  edge  [fontname="Helvetica", fontsize=9, color="#4a5868", arrowsize=0.7];
+
+  rankdir=TB; nodesep=0.2; ranksep=0.4;
+  subgraph cluster_ws { label="~/my_tiago_ws/src  (this project)"; style="rounded,dashed"; color="#2e7d4f"; fontcolor="#2e7d4f";
+    tasks [label="my_tiago_tasks (ament_python)\nrobot, perception, pick_place,\nexercise1, exercise2", fillcolor="#d9f0e3"];
+    ifra [label="IFRA_LinkAttacher (C++,\nCranfield, + local patch)", fillcolor="#f6dede"];
+    bringup [label="my_tiago_bringup\nlaunch, controllers, EKF,\ntwist_mux, SLAM, Nav2, maps", fillcolor="#d9f0e3"];
+    moveit [label="my_tiago_moveit_config\nSRDF, kinematics,\nMoveIt controllers", fillcolor="#d9f0e3"];
+    desc [label="my_tiago_description\nmy_tiago.urdf.xacro", fillcolor="#d9f0e3"];
+    subgraph cluster_ov { label="pal_description_overlay"; style="rounded"; color="#b9770e"; fontcolor="#b9770e";
+      td [label="tiago_description\n(+ use_mock_hardware)", fillcolor="#fde9cf"];
+      pmb2 [label="pmb2_\ndescription", fillcolor="#fde9cf"];
+      grip [label="pal_gripper_\ndescription", fillcolor="#fde9cf"];
+      utils [label="pal_urdf_utils", fillcolor="#fde9cf"];
+    }
+  }
+  subgraph cluster_opt { label="/opt/ros/humble (apt binaries)"; style="rounded,dashed"; color="#555555"; fontcolor="#555555";
+    nav2 [label="Nav2 1.1.20", fillcolor="#e6e9f5"];
+    slam [label="slam_toolbox", fillcolor="#e6e9f5"];
+    rl [label="robot_\nlocalization", fillcolor="#e6e9f5"];
+    mux [label="twist_mux", fillcolor="#e6e9f5"];
+    gz [label="gazebo_ros,\ngazebo_ros2_control", fillcolor="#f6dede"];
+    rc [label="ros2_control", fillcolor="#e6e9f5"];
+    mi [label="MoveIt 2.5", fillcolor="#e6e9f5"];
+  }
+  nav2 -> rc [style=invis]; slam -> mi [style=invis]; rl -> gz [style=invis];
+  tasks -> nav2 [color="#99aaaa"]; tasks -> ifra [color="#99aaaa"]; bringup -> ifra [color="#99aaaa"];
+  tasks -> bringup [style=invis];
+  bringup -> moveit; bringup -> desc;
+  bringup -> {nav2 slam rl mux gz rc} [color="#99aaaa"];
+  moveit -> desc; moveit -> mi [color="#99aaaa"];
+  desc -> td; td -> pmb2; td -> grip; td -> utils;
+}

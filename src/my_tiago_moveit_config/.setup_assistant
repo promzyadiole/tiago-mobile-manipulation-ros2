@@ -1,0 +1,11 @@
+moveit_setup_assistant_config:
+  urdf:
+    package: my_tiago_description
+    relative_path: urdf/my_tiago.urdf.xacro
+    xacro_args: use_mock_hardware:=true
+  srdf:
+    relative_path: config/tiago.srdf
+  package_settings:
+    author_name: promise
+    author_email: promzy007adiole@yahoo.com
+    generated_timestamp: 1791305766

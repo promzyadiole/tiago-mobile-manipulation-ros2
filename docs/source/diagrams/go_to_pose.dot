@@ -1,0 +1,16 @@
+
+digraph G { 
+  graph [fontname="Helvetica", fontsize=11, bgcolor="transparent", pad=0.2, nodesep=0.35, ranksep=0.45];
+  node  [fontname="Helvetica", fontsize=10, shape=box, style="rounded,filled", fillcolor="#eef3f8", color="#1f3a5f", penwidth=1.1];
+  edge  [fontname="Helvetica", fontsize=9, color="#4a5868", arrowsize=0.7];
+
+  rankdir=TB;
+  a [label="parse x, y, yaw (deg)\nargparse", fillcolor="#d9f0e3"];
+  b [label="BasicNavigator(node_name='go_to_pose')", fillcolor="#d9f0e3"];
+  c [label="wait until 'amcl' and 'bt_navigator' are active\n(NOT waitUntilNav2Active: it would reset AMCL to 0,0,0)", fillcolor="#d9f0e3"];
+  d [label="make_pose(): PoseStamped in 'map'\nq = (0, 0, sin(yaw/2), cos(yaw/2))", fillcolor="#d9f0e3"];
+  e [label="goToPose(goal)  ->  NavigateToPose action", fillcolor="#e6e9f5"];
+  f [label="isTaskComplete()?  (spins 0.1 s)\nprint distance_remaining every ~1 s", fillcolor="#e6e9f5", shape=diamond, style="filled"];
+  g [label="getResult(): SUCCEEDED / CANCELED / FAILED\nexit code 0 or 1", fillcolor="#d9f0e3"];
+  a -> b -> c -> d -> e -> f; f -> f [label=" no"]; f -> g [label=" yes"];
+}

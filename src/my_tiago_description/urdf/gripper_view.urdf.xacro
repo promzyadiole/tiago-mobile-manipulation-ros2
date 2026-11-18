@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<robot name="pal_gripper" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Defaults for the arguments PAL's gripper_test.urdf.xacro expects
+       (urdf_tutorial can only pass model:=, not xacro arguments) -->
+  <xacro:arg name="use_sim_time"     default="false"/>
+  <xacro:arg name="gazebo_version"   default="classic"/>
+  <xacro:arg name="calibration_tool" default="false"/>
+
+  <!-- PAL's stand-alone gripper model: world -> base_link -> gripper -->
+  <xacro:include filename="$(find pal_gripper_description)/robots/gripper_test.urdf.xacro"/>
+
+</robot>

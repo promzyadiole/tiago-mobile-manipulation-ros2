@@ -1,0 +1,24 @@
+
+digraph G { 
+  graph [fontname="Helvetica", fontsize=11, bgcolor="transparent", pad=0.2, nodesep=0.35, ranksep=0.45];
+  node  [fontname="Helvetica", fontsize=10, shape=box, style="rounded,filled", fillcolor="#eef3f8", color="#1f3a5f", penwidth=1.1];
+  edge  [fontname="Helvetica", fontsize=9, color="#4a5868", arrowsize=0.7];
+
+  rankdir=TB; nodesep=0.15; ranksep=0.45;
+  subgraph cluster_scripts { label="my_tiago_tasks (Python)"; style="rounded,dashed"; color="#2e7d4f"; fontcolor="#2e7d4f";
+    ex1 [label="exercise1.py", fillcolor="#d9f0e3"];
+    ex2 [label="exercise2.py", fillcolor="#d9f0e3"];
+    pp  [label="pick_place.py\nPickAndPlace", fillcolor="#d9f0e3"];
+    per [label="perception.py\nTabletopPerception", fillcolor="#d9f0e3"];
+    demos [label="robot_demo, perception_demo,\npick_demo, go_to_pose", fillcolor="#d9f0e3"];
+  }
+  robot [label="robot.py\nTiagoRobot (one node,\nMultiThreadedExecutor\nin a background thread)", fillcolor="#d9f0e3", shape=box3d];
+  mg  [label="move_group (MoveIt)\n/move_action\n/compute_cartesian_path\n/execute_trajectory\n/apply_planning_scene", fillcolor="#e6e9f5"];
+  ctl [label="gripper_controller, head_controller\n.../follow_joint_trajectory", fillcolor="#e6e9f5"];
+  nav [label="Nav2 (BasicNavigator)\nNavigateToPose, BackUp", fillcolor="#e6e9f5"];
+  tf  [label="TF2 buffer\n/joint_states", shape=ellipse, fillcolor="#ffffff"];
+  att [label="IFRA link attacher\n/ATTACHLINK, /DETACHLINK", fillcolor="#f6dede"];
+  cam [label="/head_front_camera/\ndepth/rgb/points", shape=ellipse, fillcolor="#fff6c9"];
+  ex1 -> robot; ex2 -> pp; pp -> robot; pp -> per; demos -> robot; per -> robot [label=" TF, node"]; per -> cam [label=" one cloud"];
+  robot -> mg; robot -> ctl; robot -> nav; robot -> tf; robot -> att;
+}

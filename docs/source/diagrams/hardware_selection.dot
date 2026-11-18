@@ -1,0 +1,17 @@
+
+digraph G { 
+  graph [fontname="Helvetica", fontsize=11, bgcolor="transparent", pad=0.2, nodesep=0.35, ranksep=0.45];
+  node  [fontname="Helvetica", fontsize=10, shape=box, style="rounded,filled", fillcolor="#eef3f8", color="#1f3a5f", penwidth=1.1];
+  edge  [fontname="Helvetica", fontsize=9, color="#4a5868", arrowsize=0.7];
+
+  rankdir=LR;
+  x [label="my_tiago.urdf.xacro\n+ xacro arguments", fillcolor="#d9f0e3"];
+  m [label="mock_components/GenericSystem\ncommands copied to states\n(MoveIt tests, no physics)", fillcolor="#e6e9f5"];
+  g [label="gazebo_ros2_control/GazeboSystem\njoints driven by Gazebo physics", fillcolor="#f6dede"];
+  r [label="robot_control/RobotControl\nPAL real-robot hardware", fillcolor="#eeeeee"];
+  x -> m [label=" use_mock_hardware:=true"];
+  x -> g [label=" use_sim_time:=true"];
+  x -> r [label=" (default: real robot)"];
+  cm [label="controller_manager\n+ the same 7 controllers\n(my_tiago_controllers.yaml)", fillcolor="#d9f0e3"];
+  m -> cm; g -> cm; r -> cm [style=dashed];
+}

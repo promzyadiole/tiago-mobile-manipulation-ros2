@@ -1,0 +1,29 @@
+
+digraph G { 
+  graph [fontname="Helvetica", fontsize=11, bgcolor="transparent", pad=0.2, nodesep=0.35, ranksep=0.45];
+  node  [fontname="Helvetica", fontsize=10, shape=box, style="rounded,filled", fillcolor="#eef3f8", color="#1f3a5f", penwidth=1.1];
+  edge  [fontname="Helvetica", fontsize=9, color="#4a5868", arrowsize=0.7];
+
+  rankdir=LR; nodesep=0.18; ranksep=0.42;
+  subgraph cluster_sim { label="Gazebo Classic 11"; style="rounded"; color="#b03a2e"; fontcolor="#b03a2e";
+    world [label="my_tiago_room.world\nroom, 2 tables,\nbottle, cup", fillcolor="#f6dede"];
+    robot [label="TIAGo (PAL URDF)\nros2_control: 7 controllers\nlaser, IMU, RGB-D camera", fillcolor="#f6dede"];
+    att [label="link attacher\n(patched)", fillcolor="#f6dede"];
+  }
+  ekf [label="EKF\nwheels + IMU", fillcolor="#e6e9f5"];
+  nav [label="Nav2 + AMCL\non the SLAM map", fillcolor="#e6e9f5"];
+  mux [label="twist_mux", fillcolor="#e6e9f5"];
+  mg [label="MoveIt\nmove_group", fillcolor="#e6e9f5"];
+  subgraph cluster_py { label="my_tiago_tasks (Python)"; style="rounded,dashed"; color="#2e7d4f"; fontcolor="#2e7d4f";
+    rb [label="robot.py", fillcolor="#d9f0e3"];
+    per [label="perception.py\n6-DOF poses", fillcolor="#d9f0e3"];
+    pp [label="pick_place.py", fillcolor="#d9f0e3"];
+    ex [label="exercise1.py\nexercise2.py", fillcolor="#d9f0e3"];
+  }
+  robot -> ekf [label=" odom, IMU"]; ekf -> nav [label=" TF"]; robot -> nav [label=" laser"];
+  nav -> mux -> robot [label=" base"];
+  mg -> robot [label=" arm, torso,\n gripper"];
+  robot -> per [label=" point cloud"];
+  ex -> pp -> rb; ex -> rb; pp -> per;
+  rb -> nav; rb -> mg; rb -> att; rb -> robot [label=" head, gripper", style=dashed];
+}

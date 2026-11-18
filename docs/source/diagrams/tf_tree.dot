@@ -1,0 +1,16 @@
+
+digraph G { 
+  graph [fontname="Helvetica", fontsize=11, bgcolor="transparent", pad=0.2, nodesep=0.35, ranksep=0.45];
+  node  [fontname="Helvetica", fontsize=10, shape=box, style="rounded,filled", fillcolor="#eef3f8", color="#1f3a5f", penwidth=1.1];
+  edge  [fontname="Helvetica", fontsize=9, color="#4a5868", arrowsize=0.7];
+
+  rankdir=TB;
+  node [shape=ellipse, fillcolor="#ffffff"];
+  map -> odom [label="  AMCL (navigation)\n  or slam_toolbox (mapping)", color="#c0392b", fontcolor="#c0392b", penwidth=1.6];
+  odom -> base_footprint [label="  EKF  ekf_filter_node", color="#1f6fb2", fontcolor="#1f6fb2", penwidth=1.6];
+  base_footprint -> base_link [label="  robot_state_publisher\n  (fixed joints, /tf_static)", color="#555555", fontcolor="#555555"];
+  base_link -> base_laser_link; base_link -> base_imu_link; base_link -> "wheel_*_link" [label=" RSP (from /joint_states)", fontcolor="#555555"];
+  base_link -> torso_fixed_link -> torso_lift_link;
+  torso_lift_link -> "arm_1_link ... arm_7_link" -> arm_tool_link -> wrist_ft_link -> wrist_ft_tool_link -> gripper_link -> "gripper_*_finger_link";
+  torso_lift_link -> "head_1_link" -> "head_2_link" -> "head_front_camera_*";
+}

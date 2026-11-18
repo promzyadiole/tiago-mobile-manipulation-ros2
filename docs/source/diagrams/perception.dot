@@ -1,0 +1,16 @@
+
+digraph G { 
+  graph [fontname="Helvetica", fontsize=11, bgcolor="transparent", pad=0.2, nodesep=0.35, ranksep=0.45];
+  node  [fontname="Helvetica", fontsize=10, shape=box, style="rounded,filled", fillcolor="#eef3f8", color="#1f3a5f", penwidth=1.1];
+  edge  [fontname="Helvetica", fontsize=9, color="#4a5868", arrowsize=0.7];
+
+  rankdir=TB; nodesep=0.3; ranksep=0.28;
+  a [label="1  one point cloud (640x480 RGB-D) -> base_footprint (TF)", fillcolor="#fff6c9"];
+  b [label="2  crop to the workspace; self-filter: drop points within 9 cm of the arm and 14 cm of the hand", fillcolor="#d9f0e3"];
+  c [label="3  RANSAC: largest horizontal plane -> table height and normal", fillcolor="#d9f0e3"];
+  d [label="4  PCA of the plane points -> table centre, direction, size, near edge;  check 0.6 < z < 0.9 m, >= 25 cm wide", fillcolor="#d9f0e3"];
+  e [label="5  points 1.2-45 cm above the plane, inside the outline -> clusters on a 1 cm grid", fillcolor="#d9f0e3"];
+  f [label="6  per cluster: circle fit -> axis (x, y), radius;  highest point -> height;  mean colour -> label;\nhandle (points outside the circle) -> yaw;  table normal -> roll, pitch", fillcolor="#d9f0e3"];
+  g [label="DetectedObject: label, 6-DOF pose, radius, height   +   markers on /detected_objects", fillcolor="#e6e9f5"];
+  a -> b -> c -> d -> e -> f -> g;
+}

@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<!--
+  Display the Tiago robot model in RViz, with a slider for every joint.
+
+  Usage:
+    ros2 launch my_tiago_description display.launch.xml
+    ros2 launch my_tiago_description display.launch.xml end_effector:=pal-hey5
+    ros2 launch my_tiago_description display.launch.xml gui:=false
+
+  Nodes started:
+    robot_state_publisher     reads the URDF and publishes the TF tree (link poses)
+    joint_state_publisher_gui sliders that publish /joint_states for the movable joints
+    rviz2                     shows the robot model and its TF frames
+-->
+<launch>
+
+  <!-- ===== Arguments (can be changed on the command line) ===== -->
+  <arg name="end_effector" default="pal-gripper"
+       description="pal-gripper, pal-hey5, robotiq-2f-85, robotiq-2f-140, no-end-effector"/>
+  <arg name="ft_sensor" default="schunk-ft"
+       description="schunk-ft or no-ft-sensor"/>
+  <arg name="gui" default="true"
+       description="true: joint sliders window; false: all joints at zero"/>
+  <arg name="rviz_config" default="$(find-pkg-share my_tiago_description)/rviz/urdf_config.rviz"/>
+
+
+  <!-- Path to our robot model (the xacro wrapper in this package) -->
+  <let name="model" value="$(find-pkg-share my_tiago_description)/urdf/my_tiago.urdf.xacro"/>
+
+  <!-- ===== 1. robot_state_publisher =====
+       $(command ...) runs xacro when the launch starts and puts the resulting
+       URDF text into the robot_description parameter. -->
+  <node pkg="robot_state_publisher" exec="robot_state_publisher" name="robot_state_publisher" output="screen">
+    <param name="robot_description"
+           value="$(command 'xacro $(var model) end_effector:=$(var end_effector) ft_sensor:=$(var ft_sensor)')"
+           type="str"/>
+  </node>
+
+  <!-- ===== 2. Joint states =====
+       With gui:=true a window with one slider per joint appears.
+       Without any joint_state publisher, robot_state_publisher cannot place the
+       movable links and RViz shows them in red/at the origin. -->
+  <node pkg="joint_state_publisher_gui" exec="joint_state_publisher_gui" name="joint_state_publisher_gui"
+        if="$(var gui)"/>
+  <node pkg="joint_state_publisher" exec="joint_state_publisher" name="joint_state_publisher"
+        unless="$(var gui)"/>
+
+  <!-- ===== 3. RViz ===== -->
+  <node pkg="rviz2" exec="rviz2" name="rviz2" output="log" args="-d $(var rviz_config)"/>
+
+</launch>

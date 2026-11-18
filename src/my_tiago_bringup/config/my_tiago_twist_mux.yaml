@@ -1,0 +1,20 @@
+# twist_mux: one gate in front of the base controller.
+# Several sources can send velocity commands; twist_mux forwards the one with
+# the highest priority that is still active (a source goes silent after
+# `timeout` seconds without messages). Its output (cmd_vel_out) is remapped to
+# /mobile_base_controller/cmd_vel_unstamped in my_tiago_gazebo.launch.xml.
+#
+#   Nav2 (velocity_smoother, behaviours) publish  /cmd_vel   -> priority 10
+#   teleop_twist_keyboard (remapped)     publishes /key_vel   -> priority 90
+# So a key press overrides Nav2 while you hold it, then Nav2 takes over again.
+twist_mux:
+  ros__parameters:
+    topics:
+      navigation:
+        topic   : cmd_vel
+        timeout : 0.5
+        priority: 10
+      keyboard:
+        topic   : key_vel
+        timeout : 0.5
+        priority: 90

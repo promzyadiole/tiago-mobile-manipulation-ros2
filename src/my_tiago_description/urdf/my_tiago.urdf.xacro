@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<robot name="tiago" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- TIAGo variant used in this project: PAL parallel gripper, Schunk F/T sensor -->
+  <xacro:arg name="end_effector" default="pal-gripper"/>
+  <xacro:arg name="ft_sensor"    default="schunk-ft"/>
+
+  <!-- Reuse PAL's full description instead of copying it -->
+  <xacro:include filename="$(find tiago_description)/robots/tiago.urdf.xacro"/>
+
+</robot>
