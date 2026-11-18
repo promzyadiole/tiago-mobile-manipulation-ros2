@@ -68,7 +68,7 @@ localisation, the MoveIt configuration and all of the task code were set up or w
     <td width="45%"><img src="docs/source/images/joint_overview.png" alt="TIAGo joint axes"></td>
   </tr>
   <tr>
-    <td align="center"><em>TIAGo in its own simulated room (blue: laser rays). Middle table with the cup (red) and the bottle (green); corner table at the back.</em></td>
+    <td align="center"><em>TIAGo in the custom simulated room (blue: laser rays). Middle table with the cup (red) and the bottle (green); corner table at the back.</em></td>
     <td align="center"><em>The 14 movable joints: differential-drive base, prismatic torso, 7-DOF arm, parallel gripper, pan-tilt head.</em></td>
   </tr>
 </table>
@@ -131,11 +131,11 @@ result with the camera again.
 
 <p align="center"><img src="docs/source/images/fig_place_spots.png" width="560" alt="Place spot choice"></p>
 
-## Lessons from building it
+## Engineering challenges
 
-A selection of the problems solved along the way:
+Selected issues identified and resolved during development:
 
-| Symptom | Cause | Fix |
+| Symptom | Root cause | Resolution |
 |---|---|---|
 | Robot lost after turning on the spot | Wheel slip corrupted the odometry heading | IMU-aided EKF |
 | Smeared SLAM map with ghost walls | Fast spins, wheel slip | Map at 0.25–0.3 rad/s |
@@ -144,17 +144,27 @@ A selection of the problems solved along the way:
 | Top-down gripper pose unreachable | Nav2 stopped short; target beyond the ~0.72 m reach | Target set 0.70 m ahead of where the robot actually stopped |
 | "Grasped" reported although the grasp failed | No table in view counted as "object gone" | Grasp check requires the table to be seen |
 
-## What is pre-built and what is my own
+## Original contributions and third-party components
 
-| Part | Source |
+**Developed in this project**
+
+| Component | Location |
 |---|---|
-| TIAGo robot model (URDF meshes and macros) | PAL Robotics' description packages, as source copies in `src/pal_description_overlay`; one option added (`use_mock_hardware`) |
-| Gazebo, ros2_control, MoveIt, Nav2, slam_toolbox, robot_localization, twist_mux | ROS 2 Humble binary packages |
-| Gazebo link attacher plugin (holds grasped objects in simulation) | IFRA_LinkAttacher, Cranfield University (Apache-2.0), built from source with a local patch (`patches/`) |
-| Simulation world (room, two tables, bottle, cup, furniture) | own: `src/my_tiago_bringup/worlds/my_tiago_room.world` |
-| Map of the room | own, built with slam_toolbox: `src/my_tiago_bringup/maps/` |
-| Robot wrapper, MoveIt configuration, controllers, EKF, twist_mux, SLAM and Nav2 configuration, launch files | own: `my_tiago_description`, `my_tiago_moveit_config`, `my_tiago_bringup` |
-| Task code: robot interface, perception, pick and place, the two exercises | own: `src/my_tiago_tasks` (Python) |
+| Simulation world: room, two tables, bottle, cup and furniture | `src/my_tiago_bringup/worlds/my_tiago_room.world` |
+| Occupancy map of the room, built with slam_toolbox | `src/my_tiago_bringup/maps/` |
+| Robot description wrapper (TIAGo with PAL gripper and Schunk F/T sensor) | `src/my_tiago_description` |
+| MoveIt 2 configuration: planning groups, controllers, collision matrix | `src/my_tiago_moveit_config` |
+| Controllers, EKF, twist_mux, SLAM and Nav2 configuration; launch files | `src/my_tiago_bringup` |
+| Task software: robot interface, perception, pick and place, both exercises (Python) | `src/my_tiago_tasks` |
+| Thread-safety and bookkeeping fix for the Gazebo link attacher | `patches/` |
+
+**Third-party components**
+
+| Component | Origin and use |
+|---|---|
+| TIAGo robot model (URDF, meshes, macros) | PAL Robotics description packages, included as source in `src/pal_description_overlay`; extended with a `use_mock_hardware` option |
+| Gazebo link attacher plugin | IFRA_LinkAttacher, Cranfield University (Apache-2.0), built from source with the patch above |
+| Gazebo, ros2_control, MoveIt 2, Nav2, slam_toolbox, robot_localization, twist_mux | ROS 2 Humble binary packages |
 
 ## Packages
 
@@ -211,5 +221,5 @@ Test scripts: `ros2 run my_tiago_tasks robot_demo` (arm, head, gripper), `percep
 
 ## License
 
-My own code and documentation are released under the [Apache License 2.0](LICENSE).
-Third-party packages keep their own licences: PAL Robotics' description packages in `src/pal_description_overlay` (Apache-2.0 / BSD) and IFRA_LinkAttacher (Apache-2.0, see `src/IFRA_LinkAttacher/LICENSE.md`).
+The original code and documentation in this repository are released under the [Apache License 2.0](LICENSE).
+Third-party components retain their original licences: PAL Robotics' description packages in `src/pal_description_overlay` (Apache-2.0 / BSD) and IFRA_LinkAttacher (Apache-2.0, see `src/IFRA_LinkAttacher/LICENSE.md`).
