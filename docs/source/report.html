@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>TIAGo Task Report</title>
+<style>
+/* Print document: A4, report layout. Fonts are local so the PDF builds offline. */
+:root {
+  --ink: #1d2733;
+  --muted: #5b6876;
+  --navy: #1f3a5f;
+  --teal: #1e7f74;
+  --rule: #cfd8e3;
+  --soft: #f3f6fa;
+  --warn: #fff4dc;
+  --warn-edge: #d9a441;
+  --ok: #e3f3ea;
+  --ok-edge: #3d8b5f;
+  --bad: #fbe7e5;
+  --bad-edge: #c0392b;
+  --body: "Liberation Serif", "DejaVu Serif", serif;
+  --head: "DejaVu Sans", "Liberation Sans", sans-serif;
+  --mono: "DejaVu Sans Mono", "Liberation Mono", monospace;
+}
+@page {
+  size: A4;
+  margin: 20mm 18mm 20mm 18mm;
+  @bottom-center { content: counter(page); font-family: "DejaVu Sans", sans-serif; font-size: 8.5pt; color: #5b6876; }
+  @top-right { content: "ROS Simulation Task: report (Promise Emeziem Adiole)"; font-family: "DejaVu Sans", sans-serif; font-size: 7.5pt; color: #8a96a3; }
+}
+@page :first { @top-right { content: none; } }
+html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+body { font-family: var(--body); font-size: 10.8pt; line-height: 1.45; color: var(--ink); background: #fff; margin: 0; }
+h1, h2, h3, h4 { font-family: var(--head); color: var(--navy); line-height: 1.2; text-wrap: balance; }
+h2 { font-size: 16pt; margin: 22pt 0 8pt; padding-bottom: 4pt; border-bottom: 2px solid var(--navy); }
+h2.newpage { break-before: page; margin-top: 0; }
+h2 .num { color: var(--teal); margin-right: 6pt; }
+h3 { font-size: 12pt; margin: 14pt 0 5pt; }
+h4 { font-size: 10.5pt; margin: 10pt 0 4pt; color: var(--ink); }
+h2, h3, h4 { break-after: avoid; page-break-after: avoid; }
+p { margin: 0 0 6pt; text-align: justify; hyphens: auto; }
+ul, ol { margin: 0 0 6pt 0; padding-left: 18pt; }
+li { margin-bottom: 2pt; }
+code, .mono { font-family: var(--mono); font-size: 8.6pt; background: var(--soft); padding: 0 2pt; border-radius: 2pt; }
+pre { font-family: var(--mono); font-size: 8.2pt; line-height: 1.38; background: var(--soft); border: 1px solid var(--rule);
+      border-left: 3px solid var(--teal); padding: 6pt 8pt; margin: 4pt 0 8pt; white-space: pre-wrap; break-inside: avoid; }
+pre code { background: none; padding: 0; font-size: inherit; }
+table { border-collapse: collapse; width: 100%; margin: 4pt 0 9pt; font-size: 9.2pt; break-inside: avoid; font-family: var(--head); }
+th { background: var(--navy); color: #fff; text-align: left; font-weight: 600; padding: 3.5pt 5pt; }
+td { border-bottom: 1px solid var(--rule); padding: 3pt 5pt; vertical-align: top; }
+tr:nth-child(even) td { background: #f8fafc; }
+td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; }
+td code { font-size: 8pt; }
+th code { background: rgba(255, 255, 255, 0.18); color: #ffffff; font-size: 8pt; }
+figure { margin: 8pt 0 10pt; text-align: center; break-inside: avoid; }
+figure img { max-width: 100%; border: 1px solid var(--rule); }
+figure img.plain { border: none; }
+figcaption { font-family: var(--head); font-size: 8.6pt; color: var(--muted); margin-top: 4pt; text-align: center; }
+figcaption b { color: var(--navy); }
+.note, .warn, .ok, .bad { font-size: 10pt; padding: 6pt 9pt; margin: 6pt 0 9pt; border-left: 4px solid; break-inside: avoid; }
+.note { background: var(--soft); border-color: var(--navy); }
+.warn { background: var(--warn); border-color: var(--warn-edge); }
+.ok { background: var(--ok); border-color: var(--ok-edge); }
+.bad { background: var(--bad); border-color: var(--bad-edge); }
+.note b:first-child, .warn b:first-child, .ok b:first-child, .bad b:first-child { font-family: var(--head); }
+.eq { font-family: var(--mono); font-size: 9.2pt; text-align: center; margin: 6pt 0 8pt; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 10pt; }
+.keep { break-inside: avoid; }
+
+/* title page */
+.cover { height: 250mm; display: flex; flex-direction: column; justify-content: space-between; }
+.cover .band { background: var(--navy); color: #fff; padding: 16mm 12mm 13mm; border-radius: 3pt; }
+.cover .eyebrow { font-family: var(--head); font-size: 10pt; letter-spacing: 0.12em; text-transform: uppercase; color: #9fd0c8; }
+.cover h1 { color: #fff; font-size: 27pt; margin: 6pt 0 8pt; }
+.cover .sub { font-family: var(--head); font-size: 12.5pt; color: #d6e2ef; }
+.cover .meta { font-family: var(--head); font-size: 10pt; color: var(--ink); }
+.cover .meta table { width: auto; font-size: 10pt; }
+.cover .meta td { border: none; padding: 2pt 14pt 2pt 0; background: none !important; }
+.cover .meta td:first-child { color: var(--muted); }
+.cover img { width: 100%; border: 1px solid var(--rule); }
+
+/* table of contents */
+.unused-toc { columns: 2; column-gap: 16pt; font-family: var(--head); font-size: 9.6pt; }
+.unused-toc a { color: var(--ink); text-decoration: none; }
+.unused-toc .l1 { font-weight: 700; margin-top: 5pt; color: var(--navy); break-after: avoid; }
+.unused-toc .l2 { padding-left: 12pt; color: var(--muted); }
+a { color: var(--teal); }
+</style>
+<style>h2 { break-before: auto; } h3 { font-size: 12.5pt; margin-top: 12pt; border-bottom: 1px solid var(--rule); padding-bottom: 2pt; } table { font-size: 8.8pt; } p, li { font-size: 10.2pt; }</style>
+</head>
+<body>
+
+<div style="border-bottom: 3px solid var(--navy); padding-bottom: 8pt; margin-bottom: 10pt;">
+  <div style="font-family: var(--head); font-size: 9pt; letter-spacing: 0.1em; text-transform: uppercase; color: var(--teal);">ROS 2 Simulation Task &middot; Mobile Manipulation</div>
+  <h1 style="font-size: 21pt; margin: 4pt 0 4pt;">TIAGo Mobile Manipulation in ROS 2: Report</h1>
+  <div style="font-family: var(--head); font-size: 10pt; color: var(--muted);">Promise Emeziem Adiole &middot; October 10, 2026 &middot; Ubuntu 22.04, ROS 2 Humble, Gazebo Classic 11</div>
+</div>
+
+<h3 style="margin-top: 4pt;">Summary</h3>
+<p>Both exercises are solved in simulation with my own ROS 2 workspace (<code>my_tiago_ws</code>). In Exercise 1, TIAGo starts in a corner of the room, drives in front of the middle table with Nav2 and moves its gripper right above the table with MoveIt. In Exercise 2, a Python script moves the bottle and the cup to the corner table autonomously: the objects are found with the head RGB-D camera (table plane and a 6-DOF pose per object), picked with MoveIt, carried with Nav2 and placed on a free spot of the corner table. The demo video <code>video/demo.mp4</code> (2 minutes) shows one run of each exercise.</p>
+<table>
+  <tr><th>Task</th><th>Script</th><th>Result (fresh simulation each run)</th></tr>
+  <tr><td>Exercise 1</td><td><code>my_tiago_tasks/exercise1.py</code></td><td>5 of 5 runs: gripper pointing down, fingertips 0.29&ndash;0.31 m above the table top; 41&ndash;66 s</td></tr>
+  <tr><td>Exercise 2</td><td><code>my_tiago_tasks/exercise2.py</code></td><td>4 of 4 runs with the final code: bottle and cup upright on the corner table (Gazebo ground truth), cup to the right of the bottle, 15&ndash;20 cm apart, at least 14 cm inside the table edges; 7&ndash;9 min</td></tr>
+</table>
+<figure><img src="images/gazebo_room.png" alt="Simulation" style="width:62%">
+<figcaption><b>Figure 1.</b> The simulation: TIAGo in its start corner, the middle table with the cup (red) and the bottle (green), the corner table at the back.</figcaption></figure>
+
+<h3>1. What is pre-built and what I built</h3>
+<table>
+  <tr><th>Part</th><th>Source</th></tr>
+  <tr><td>TIAGo robot model (URDF, meshes)</td><td>PAL Robotics' description packages (<code>tiago_description</code>, <code>pmb2_description</code>, <code>pal_gripper_description</code>, <code>pal_urdf_utils</code>), used as source copies; I added one option (<code>use_mock_hardware</code>) and a wrapper that selects the PAL gripper and the Schunk F/T sensor</td></tr>
+  <tr><td>Simulator and frameworks</td><td>Gazebo Classic 11, ros2_control and ros2_controllers, MoveIt 2, Nav2, slam_toolbox, robot_localization, twist_mux (ROS 2 Humble binaries)</td></tr>
+  <tr><td>Grasp helper for simulation</td><td>IFRA_LinkAttacher Gazebo plugin (Cranfield University), built from source with my patch</td></tr>
+  <tr><td><b>Simulation environment</b></td><td><b>Mine</b>: <code>my_tiago_room.world</code> (6.6 m room, middle table 0.8 &times; 1.2 m, corner table 0.7 &times; 0.7 m, bottle, cup, furniture). No pre-built world was used. The map of the room was built with slam_toolbox.</td></tr>
+  <tr><td><b>Configuration and code</b></td><td><b>Mine</b>: launch files, controller, EKF, twist_mux, SLAM and Nav2 parameters, MoveIt configuration (made with the Setup Assistant), and the Python task code: <code>robot.py</code>, <code>perception.py</code>, <code>pick_place.py</code>, <code>exercise1.py</code>, <code>exercise2.py</code></td></tr>
+</table>
+<p>I deliberately did not use PAL's all-in-one launch files: every layer (robot model, controllers, MoveIt, Gazebo bringup, mapping, navigation, task code) is my own package, so that each part is understood and can be changed.</p>
+
+<h3>2. System overview</h3>
+<figure><img class="plain" src="diagrams/system_overview.svg" alt="System overview" style="width:100%">
+<figcaption><b>Figure 2.</b> Main components. The Python task code talks to Nav2, MoveIt, the controllers and the link attacher through one interface class (<code>robot.py</code>).</figcaption></figure>
+
+<h3>3. Exercise 1: decisions</h3>
+<ul>
+  <li><b>Navigation with a map.</b> I mapped the room once with slam_toolbox and navigate with Nav2 and AMCL on the saved map. The robot spawns where mapping started, so AMCL starts localised at (0, 0, 0).</li>
+  <li><b>Odometry from wheels and IMU.</b> The simulated base slips when it turns on the spot; wheel odometry alone was off by 3.4 m and 77&deg; after one trip and AMCL got lost. An EKF (robot_localization) takes the forward speed from the wheels and the heading from the base IMU; afterwards AMCL stayed within 0.11 m and 4&deg; of the ground truth.</li>
+  <li><b>MoveIt through its ROS interfaces.</b> MoveIt's Python API (<code>moveit_py</code>) is not released for ROS 2 Humble, so <code>robot.py</code> sends goals to <code>move_group</code>'s action and services (<code>/move_action</code>, <code>/compute_cartesian_path</code>, <code>/execute_trajectory</code>, <code>/apply_planning_scene</code>).</li>
+  <li><b>The table is in MoveIt's collision scene</b> before the arm moves, so the arm is planned around it.</li>
+  <li><b>Target relative to where the robot stopped.</b> Nav2 stops within 10 cm and 20&deg; of the goal. A target fixed on the table was sometimes 0.81 m ahead of the base, beyond the arm's reach with a downward gripper (about 0.72 m, which I measured). The gripper target is therefore 0.70 m ahead of the robot's actual pose, and the robot stops 0.5 m before the table.</li>
+</ul>
+<figure><img src="images/ex1_result_gazebo.png" alt="Exercise 1" style="width:62%">
+<figcaption><b>Figure 3.</b> Exercise 1 result: gripper pointing down above the middle table.</figcaption></figure>
+
+<h3>4. Exercise 2: decisions</h3>
+<h4>Perception (6-DOF poses), <code>perception.py</code></h4>
+<p>One point cloud from the head camera is transformed into the robot frame. RANSAC finds the table plane (height, normal) and PCA its outline. Points above the table are clustered on a 1 cm grid. For each cluster, a least-squares circle fit gives the cylinder's axis (x, y) although only its front half is visible; the height comes from the highest point, z from the table height; roll and pitch from the table normal; yaw from the cup's handle (points outside the circle); the label from the mean colour. Measured against the world file: table height within 2 mm, object positions within about 2 cm, heights and radii within 2 mm. The head is pointed at the objects before measuring: an object at the image edge was cut off (9.9 cm instead of 26 cm high).</p>
+<h4>Pick and place, <code>pick_place.py</code></h4>
+<ul>
+  <li><b>Side grasp, object front-right of the base.</b> If an object is not about 0.70 m ahead and 0.10 m to the right (the arm's side), the base is repositioned first. Reaching across the body made the robot tip onto one wheel.</li>
+  <li><b>Pre-grasp with MoveIt, then straight lines.</b> A planned pre-grasp pose 15 cm before the object, then a straight approach, lift, lowering and retreat. Straight-line paths are refused if a joint jumps by more than 0.3 rad per 1 cm step or travels more than 1.2 rad: without this guard, an IK flip made the arm swing round and threw the robot 0.5 m. Other approach directions are then tried. While an object is held, the hand reaches the carry pose along a straight line and any planned move runs at reduced speed: a fast planned swing of the outstretched arm once spun the whole robot around.</li>
+  <li><b>Holding objects in Gazebo.</b> Position-controlled fingers cannot hold an object in Gazebo's physics. After closing the fingers 4 mm short of the surface, the object is fixed to the gripper with the IFRA_LinkAttacher plugin and released before the fingers open. The plugin froze Gazebo when releasing; I patched it to pause the world around the joint change (Gazebo's own mechanism) and to forget removed joints.</li>
+  <li><b>Choosing where to place.</b> A grid of candidate spots on the measured outline of the corner table: at least 10 cm from the edges, 14 cm from objects already there, and not behind an object (the gripper approaches horizontally). The preferred spots are fixed on the table itself (its position is known from the map), so they do not depend on how the robot stopped: the bottle 7.5 cm left of the table's centre line and the cup 7.5 cm right of it. The arm is mounted on TIAGo's right, so the second object must stand to the right of the first: placing the cup on the left made the arm reach across the standing bottle. The object is released 1.5 cm above the table, and the gripper rises above the object's top before pulling back.</li>
+  <li><b>Checks with the camera.</b> After a grasp, the table must be seen without the object on it; after placing, the object must be seen on the corner table. Each pick has up to 3 attempts.</li>
+</ul>
+<div class="two">
+  <figure><img src="images/fig_place_spots.png" alt="Place spot choice"><figcaption><b>Figure 4.</b> Place spot choice for the cup next to the already placed bottle.</figcaption></figure>
+  <figure><img src="images/ex2_result_gazebo.png" alt="Exercise 2 result"><figcaption><b>Figure 5.</b> Exercise 2 result: bottle and cup on the corner table.</figcaption></figure>
+</div>
+
+<h3>5. Other decisions worth mentioning</h3>
+<ul>
+  <li><b>Own controller file</b> (values from PAL's public simulation), the same file for mock hardware and Gazebo; only the hardware plugin in the URDF changes.</li>
+  <li><b>twist_mux</b> in front of the base: Nav2 publishes on <code>/cmd_vel</code>, the base controller listens elsewhere; twist_mux also lets the keyboard override Nav2.</li>
+  <li><b>Static-map costmaps</b> for Nav2: the room is fully mapped, and with the laser layers the planner's and controller's TF buffers intermittently froze.</li>
+  <li><b>MoveIt collision matrix:</b> 41 wrist and gripper link pairs from PAL's SRDF added to the Setup Assistant result; without them MoveIt refused normal wrist poses.</li>
+  <li><b>Localisation watchdog.</b> In a few test runs AMCL silently stopped updating (no error), always with both RViz windows open, which also displayed the full head-camera point cloud. Before every drive the robot checks that AMCL is current; if not, it restarts AMCL through Nav2's lifecycle manager at the pose estimated from AMCL's last update plus the EKF odometry. The point cloud display is off by default.</li>
+  <li><b>CycloneDDS</b> needs a higher participant limit on localhost (<code>CYCLONEDDS_URI</code>, see <code>INSTALL.md</code>) for Gazebo, Nav2 and MoveIt to run together.</li>
+</ul>
+<p><b>Limitations.</b> Tested only with the objects in their start positions; the cup's handle direction is sometimes misread (the grasp then approaches along the line of sight, which works); the link attacher replaces real grasp forces and is not needed on the real robot.</p>
+
+<h3>6. Sources</h3>
+<ul>
+  <li>PAL Robotics TIAGo ROS 2 packages: tiago_robot / pmb2_robot / pal_gripper description, controller and navigation configuration (github.com/pal-robotics). Controller values and Nav2 parameters are based on PAL's public-simulation files.</li>
+  <li>ROS 2 Humble documentation (docs.ros.org/en/humble), ros2_control and gazebo_ros2_control documentation.</li>
+  <li>MoveIt 2 documentation and the <code>moveit_msgs</code> action and service definitions (moveit.picknik.ai).</li>
+  <li>Nav2 documentation and <code>nav2_simple_commander</code> (docs.nav2.org); slam_toolbox (github.com/SteveMacenski/slam_toolbox); robot_localization (docs.ros.org/en/humble/p/robot_localization); twist_mux.</li>
+  <li>IFRA_LinkAttacher, IFRA Group, Cranfield University (github.com/IFRA-Cranfield/IFRA_LinkAttacher), Apache-2.0.</li>
+  <li>Algorithms: RANSAC (Fischler and Bolles, 1981); algebraic least-squares circle fit (K&aring;sa, 1976); PCA for the table outline. Implemented with numpy.</li>
+</ul>
+
+<h3>7. How to run</h3>
+<p>Build with <code>colcon build --symlink-install</code> in <code>my_tiago_ws</code> (requirements and <code>~/.bashrc</code> settings in <code>INSTALL.md</code>). In four terminals, each after <code>source install/setup.bash</code>:</p>
+<pre><code>ros2 launch my_tiago_bringup my_tiago_gazebo.launch.xml       # 1. simulation
+ros2 launch my_tiago_bringup my_tiago_navigation.launch.xml   # 2. Nav2 + AMCL
+ros2 launch my_tiago_bringup my_tiago_moveit_sim.launch.xml   # 3. MoveIt
+ros2 run my_tiago_tasks exercise1                             # 4. or: exercise2</code></pre>
+<p>The main Python files are in <code>src/my_tiago_tasks/my_tiago_tasks/</code>: <code>exercise1.py</code>, <code>exercise2.py</code>, <code>pick_place.py</code>, <code>perception.py</code> and <code>robot.py</code>. <code>README.md</code> gives an overview of all packages.</p>
+
+</body>
+</html>

@@ -7,7 +7,7 @@ ROS 2 Humble workspace for a ROS 2 simulation task in mobile manipulation:
 - **Exercise 1:** TIAGo starts in a corner of a room, drives in front of the middle table (Nav2) and moves its arm right above the table (MoveIt).
 - **Exercise 2:** TIAGo moves a bottle and a cup from the middle table to a table in the corner, autonomously, finding the objects' 6-DOF poses with its head RGB-D camera.
 
-Documentation (design decisions, results, sources): **[docs/my_tiago_documentation.pdf](docs/my_tiago_documentation.pdf)**. Installation: **[INSTALL.md](INSTALL.md)**.
+Report (5 pages: decisions, results, sources): **[report.pdf](report.pdf)**. Full documentation: **[docs/my_tiago_documentation.pdf](docs/my_tiago_documentation.pdf)**. Installation: **[INSTALL.md](INSTALL.md)**.
 Demo video (one run of each exercise, 2 minutes): **[video/demo.mp4](video/demo.mp4)**.
 
 ## Results
